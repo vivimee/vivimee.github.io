@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> html5-history · Vivimee</title><meta name="description" content="html5-history - vivimee"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/css/prontera.css"><link rel="search" type="application/opensearchdescription+xml" href="https://vivimee.github.io/atom.xml" title="Vivimee"></head><body><header class="feature-header"><nav class="component-nav"><ul><div class="logo-container"><a href="/"><h2 class="title">Vivimee</h2></a></div><a href="/" target="_self" class="li component-nav-item"><p>首页</p></a><a href="/archives/" target="_self" class="li component-nav-item"><p>归档</p></a><a href="/about/" target="_self" class="li component-nav-item"><p>关于</p></a><ul class="shortcut-icons"><a href="https://github.com/vivimee" target="_blank"><img src="/images/github.svg" class="icon"></a><a href="/atom.xml" target="_blank"><img src="/images/rss.svg" class="icon"></a></ul></ul></nav></header><main class="container"><div id="post-container"><div class="post"><article class="post-block"><h1 class="post-title">html5-history</h1><div class="post-info">2018年12月2日</div><div class="post-content"><h2 id="HTML5-history"><a href="#HTML5-history" class="headerlink" title="HTML5-history"></a>HTML5-history</h2><p>window.history 对象是HTML5提供的用于维护当前标签页浏览历史的对象。主要功能是前进后退和在不刷新页面的情况下，修改地址栏里的URL地址。</p>
+<h3 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h3><p>常用的属性只有 history.length， 表示当前标签页浏览历史的长度，初始值是 1。对history.length赋值并不会起作用，也没有任何反应。</p>
+<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><h4 id="前进后退"><a href="#前进后退" class="headerlink" title="前进后退"></a>前进后退</h4><ol>
+<li>history.back() 后退到上一个页面。当前已经是第一个页面时，调用此函数不会有任何反应。</li>
+<li>history.forward() 进入历史的下一个页面。当前已经是最后一个页面时，调用此函数不会有任何反应。</li>
+<li>history.go(step) step为正前进step个页面，step为负后退step和页面，超过页面历史范围的调用不会有任何反应。</li>
+</ol>
+<h4 id="修改历史（地址栏的URL）"><a href="#修改历史（地址栏的URL）" class="headerlink" title="修改历史（地址栏的URL）"></a>修改历史（地址栏的URL）</h4><ol>
+<li>history.pushState(state, title, url) 不刷新页面并添加一条历史记录，title表示下个页面的标题（貌似目前所有浏览器都忽略state和title）；url表示新的地址。</li>
+<li>history.replaceState(state, title, url) 替换当前地址栏里的url，state和title会被所有浏览器忽略。</li>
+</ol>
+<h3 id="相关事件"><a href="#相关事件" class="headerlink" title="相关事件"></a>相关事件</h3><ol>
+<li>popstate，前进或者后退时会触发。pushState 和 replaceState 不会触发此事件。</li>
+<li>hashchange，当前页面的hash值发生变化时触发。</li>
+</ol>
+<h3 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h3><ol>
+<li>改变浏览历史，不让用户回退到某个页面。</li>
+<li>前端路由。<br>常用的前端路由是通过hash实现的，history提供了操作历史的api后，就可以通过history来实现了。</li>
+</ol>
+<h3 id="附"><a href="#附" class="headerlink" title="附"></a>附</h3><p>URL各部分的含义：<br><code>https://www.baidu.com/search?word=abc&amp;time=12345#/article/item?title=hello</code><br>host: <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a><br>origin: <a href="https://www.baidu.com" target="_blank" rel="noopener">https://www.baidu.com</a><br>pathname: /search<br>search: ?word=abc&amp;time=12345<br>hash: #/article/item?title=hello  </p>
+<p>向服务器发起请求的时候 hash 部分不会被发送出去，因此需要传递给服务器的query参数必须放到hash前面。而hash后面的参数一般在前端路由时被读取和处理。</p>
+</div></article></div><div id="disqus_thread"></div></div><script>var disqus_shortname = 'angrypowman';
+var disqus_identifier = '2018/12/02/html5-history/';
+var disqus_title = 'html5-history';
+var disqus_url = 'https://vivimee.github.io/2018/12/02/html5-history/';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//angrypowman.disqus.com/count.js" async></script></main><footer class="footer-container"><div class="paginator"><a href="/2018/02/03/tree/" class="next">下一篇</a></div><div class="copyright"><p>© 2018 <a href="https://vivimee.github.io">vivimee</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/AngryPowman/hexo-theme-prontera" target="_blank">hexo-theme-prontera</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"angrypowman",'auto');ga('send','pageview');</script></body></html>

@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://vivimee.github.io/"/>
-  <updated>2018-12-02T13:15:25.897Z</updated>
+  <updated>2018-12-02T14:54:19.703Z</updated>
   <id>https://vivimee.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>html5-history</title>
+    <link href="https://vivimee.github.io/2018/12/02/html5-history/"/>
+    <id>https://vivimee.github.io/2018/12/02/html5-history/</id>
+    <published>2018-12-02T13:47:23.000Z</published>
+    <updated>2018-12-02T14:54:19.703Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="HTML5-history"><a href="#HTML5-history" class="headerlink" title="HTML5-history"></a>HTML5-history</h2><p>window.history 对象是HTML5提供的用于维护当前标签页浏览历史的对象。主要功能是前进后退和在不刷新页面的情况下，修改地址栏里的URL地址。</p><h3 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h3><p>常用的属性只有 history.length， 表示当前标签页浏览历史的长度，初始值是 1。对history.length赋值并不会起作用，也没有任何反应。</p><h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><h4 id="前进后退"><a href="#前进后退" class="headerlink" title="前进后退"></a>前进后退</h4><ol><li>history.back() 后退到上一个页面。当前已经是第一个页面时，调用此函数不会有任何反应。</li><li>history.forward() 进入历史的下一个页面。当前已经是最后一个页面时，调用此函数不会有任何反应。</li><li>history.go(step) step为正前进step个页面，step为负后退step和页面，超过页面历史范围的调用不会有任何反应。</li></ol><h4 id="修改历史（地址栏的URL）"><a href="#修改历史（地址栏的URL）" class="headerlink" title="修改历史（地址栏的URL）"></a>修改历史（地址栏的URL）</h4><ol><li>history.pushState(state, title, url) 不刷新页面并添加一条历史记录，title表示下个页面的标题（貌似目前所有浏览器都忽略state和title）；url表示新的地址。</li><li>history.replaceState(state, title, url) 替换当前地址栏里的url，state和title会被所有浏览器忽略。</li></ol><h3 id="相关事件"><a href="#相关事件" class="headerlink" title="相关事件"></a>相关事件</h3><ol><li>popstate，前进或者后退时会触发。pushState 和 replaceState 不会触发此事件。</li><li>hashchange，当前页面的hash值发生变化时触发。</li></ol><h3 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h3><ol><li>改变浏览历史，不让用户回退到某个页面。</li><li>前端路由。<br>常用的前端路由是通过hash实现的，history提供了操作历史的api后，就可以通过history来实现了。</li></ol><h3 id="附"><a href="#附" class="headerlink" title="附"></a>附</h3><p>URL各部分的含义：<br><code>https://www.baidu.com/search?word=abc&amp;time=12345#/article/item?title=hello</code><br>host: <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a><br>origin: <a href="https://www.baidu.com" target="_blank" rel="noopener">https://www.baidu.com</a><br>pathname: /search<br>search: ?word=abc&amp;time=12345<br>hash: #/article/item?title=hello  </p><p>向服务器发起请求的时候 hash 部分不会被发送出去，因此需要传递给服务器的query参数必须放到hash前面。而hash后面的参数一般在前端路由时被读取和处理。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;HTML5-history&quot;&gt;&lt;a href=&quot;#HTML5-history&quot; class=&quot;headerlink&quot; title=&quot;HTML5-history&quot;&gt;&lt;/a&gt;HTML5-history&lt;/h2&gt;&lt;p&gt;window.history 对象是HTML5提供的
+      
+    
+    </summary>
+    
+    
+      <category term="HTML5" scheme="https://vivimee.github.io/tags/HTML5/"/>
+    
+      <category term="history" scheme="https://vivimee.github.io/tags/history/"/>
+    
+  </entry>
   
   <entry>
     <title>树的遍历</title>
