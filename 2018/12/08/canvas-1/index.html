@@ -1,4 +1,491 @@
-<!DOCTYPE html><html lang="zh-cn"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> canvas-坐标系、圆角矩形、纹理、剪裁图片 · Vivimee</title><meta name="description" content="canvas-坐标系、圆角矩形、纹理、剪裁图片 - vivimee"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/css/prontera.css"><link rel="search" type="application/opensearchdescription+xml" href="https://vivimee.github.io/atom.xml" title="Vivimee"></head><body><header class="feature-header"><nav class="component-nav"><ul><div class="logo-container"><a href="/"><h2 class="title">Vivimee</h2></a></div><a href="/" target="_self" class="li component-nav-item"><p>首页</p></a><a href="/archives/" target="_self" class="li component-nav-item"><p>归档</p></a><a href="/about/" target="_self" class="li component-nav-item"><p>关于</p></a><ul class="shortcut-icons"><a href="https://github.com/vivimee" target="_blank"><img src="/images/github.svg" class="icon"></a><a href="/atom.xml" target="_blank"><img src="/images/rss.svg" class="icon"></a></ul></ul></nav></header><main class="container"><div id="post-container"><div class="post"><article class="post-block"><h1 class="post-title">canvas-坐标系、圆角矩形、纹理、剪裁图片</h1><div class="post-info">2018年12月8日</div><div class="post-content"><h2 id="坐标系"><a href="#坐标系" class="headerlink" title="坐标系"></a>坐标系</h2><p><code>画布大小</code>：由canvas标签上设置的width，height决定，默认是 300 x 150，这也是画布坐标系x轴和y轴的最大值，超过这两个值，则意味着超过了画布大小，超过的部分自然不会生效。<br><code>canvas标签大小</code>：由css样式的width，height决定，默认是画布的大小。<br>特殊情况： 画布大小和canvas标签大小不相等的时候，画布会被缩放到跟标签大小一样。<strong>缩放不是等比例的，并且缩放完成后，画布的坐标系不变</strong>。因此最好把canvas标签的css大小和canvas画布大小设置为一致。<br><a id="more"></a><br>默认画布（300 * 150）<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">canvas</span> <span class="attr">id</span>=<span class="string">"canvas1"</span> <span class="attr">style</span>=<span class="string">&#123;&#123;</span> <span class="attr">width:</span> '<span class="attr">100px</span>', <span class="attr">height:</span> '<span class="attr">100px</span>' &#125;&#125;&gt;</span><span class="tag">&lt;/<span class="name">canvas</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.6.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.6.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.6.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.6.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="坐标系画布大小：由canvas标签上设置的width，height决定，默认是 300 x 150，这也是画布坐标系x轴和y轴的最大值，超过这两个值，则意味着超过了画布大小，超过的部分自然不会生效。canvas标签大小：由css样式的width，height决定，默认是画布的大小。特殊情况： 画布大小和canvas标签大小不相等的时候，画布会被缩放到跟标签大小一样。缩放不是等比例的，并且缩放完成后">
+<meta name="keywords" content="HTML5,canvas">
+<meta property="og:type" content="article">
+<meta property="og:title" content="canvas-坐标系、圆角矩形、纹理、剪裁图片">
+<meta property="og:url" content="https://vivimee.github.io/2018/12/08/canvas-1/index.html">
+<meta property="og:site_name" content="Vivimee">
+<meta property="og:description" content="坐标系画布大小：由canvas标签上设置的width，height决定，默认是 300 x 150，这也是画布坐标系x轴和y轴的最大值，超过这两个值，则意味着超过了画布大小，超过的部分自然不会生效。canvas标签大小：由css样式的width，height决定，默认是画布的大小。特殊情况： 画布大小和canvas标签大小不相等的时候，画布会被缩放到跟标签大小一样。缩放不是等比例的，并且缩放完成后">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678ca8b12ed52ac?w=730&h=304&f=png&s=20047">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678cad88f37771b?w=656&h=284&f=png&s=27131">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678caf2cc0e2b59?w=708&h=300&f=png&s=18448">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678cb6968997a6b?w=204&h=210&f=gif&s=1857">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678cbf146fbd0b1?w=260&h=296&f=png&s=10713">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678cc1408f926ca?w=262&h=292&f=png&s=12469">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678cc41443a6e23?w=226&h=284&f=png&s=14065">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678ccced19b54fd?w=320&h=240&f=jpeg&s=15095">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678ccd8cf380bac?w=822&h=670&f=png&s=296556">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678cd02ff14ca2a?w=842&h=692&f=png&s=446408">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678cee75cc7c6e9?w=414&h=276&f=png&s=180090">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678cf55c7a10005?w=426&h=492&f=png&s=85899">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678cf62e387d6a0?w=484&h=498&f=png&s=108412">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678cf6d7e577878?w=438&h=496&f=png&s=140836">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678cf7a13a5c71f?w=474&h=494&f=png&s=147021">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678d1766f6348e2?w=326&h=318&f=png&s=50122">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678d2758f73be4b?w=648&h=292&f=png&s=77523">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678d305d5c40fc0?w=444&h=430&f=png&s=180493">
+<meta property="og:updated_time" content="2018-12-09T01:20:18.335Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="canvas-坐标系、圆角矩形、纹理、剪裁图片">
+<meta name="twitter:description" content="坐标系画布大小：由canvas标签上设置的width，height决定，默认是 300 x 150，这也是画布坐标系x轴和y轴的最大值，超过这两个值，则意味着超过了画布大小，超过的部分自然不会生效。canvas标签大小：由css样式的width，height决定，默认是画布的大小。特殊情况： 画布大小和canvas标签大小不相等的时候，画布会被缩放到跟标签大小一样。缩放不是等比例的，并且缩放完成后">
+<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2018/12/8/1678ca8b12ed52ac?w=730&h=304&f=png&s=20047">
+
+
+
+
+
+
+  <link rel="canonical" href="https://vivimee.github.io/2018/12/08/canvas-1/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>canvas-坐标系、圆角矩形、纹理、剪裁图片 | Vivimee</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Vivimee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Hello World!</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://vivimee.github.io/2018/12/08/canvas-1/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Vivimee">
+      <meta itemprop="description" content="自律给我自由！">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Vivimee">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">canvas-坐标系、圆角矩形、纹理、剪裁图片
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-08 18:11:36" itemprop="dateCreated datePublished" datetime="2018-12-08T18:11:36+08:00">2018-12-08</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-09 09:20:18" itemprop="dateModified" datetime="2018-12-09T09:20:18+08:00">2018-12-09</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="坐标系"><a href="#坐标系" class="headerlink" title="坐标系"></a>坐标系</h2><p><code>画布大小</code>：由canvas标签上设置的width，height决定，默认是 300 x 150，这也是画布坐标系x轴和y轴的最大值，超过这两个值，则意味着超过了画布大小，超过的部分自然不会生效。<br><code>canvas标签大小</code>：由css样式的width，height决定，默认是画布的大小。<br>特殊情况： 画布大小和canvas标签大小不相等的时候，画布会被缩放到跟标签大小一样。<strong>缩放不是等比例的，并且缩放完成后，画布的坐标系不变</strong>。因此最好把canvas标签的css大小和canvas画布大小设置为一致。<br><a id="more"></a><br>默认画布（300 * 150）<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">canvas</span> <span class="attr">id</span>=<span class="string">"canvas1"</span> <span class="attr">style</span>=<span class="string">&#123;&#123;</span> <span class="attr">width:</span> '<span class="attr">100px</span>', <span class="attr">height:</span> '<span class="attr">100px</span>' &#125;&#125;&gt;</span><span class="tag">&lt;/<span class="name">canvas</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ctx.moveTo(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">ctx.lineTo(<span class="number">300</span>, <span class="number">150</span>);</span><br><span class="line">ctx.stroke();</span><br></pre></td></tr></table></figure>
 <p><img src="https://user-gold-cdn.xitu.io/2018/12/8/1678ca8b12ed52ac?w=730&amp;h=304&amp;f=png&amp;s=20047" alt=""><br>可以看到从（0，0）到（300， 150）这条线是从左上角到右下角的，可见画布被不等比例缩放到跟标签一样大，同时坐标系还是画布的大小：300 * 150。<br>当画布较小，而canvas标签比较大的时候，图形就会被放大，变形变模糊:<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">canvas</span> <span class="attr">id</span>=<span class="string">"canvas2"</span> <span class="attr">width</span>=<span class="string">&#123;10&#125;</span> <span class="attr">height</span>=<span class="string">&#123;20&#125;</span> <span class="attr">style</span>=<span class="string">&#123;&#123;</span> <span class="attr">width:</span> '<span class="attr">100px</span>', <span class="attr">height:</span> '<span class="attr">100px</span>' &#125;&#125;&gt;</span><span class="tag">&lt;/<span class="name">canvas</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ctx.moveTo(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">ctx.lineTo(<span class="number">10</span>, <span class="number">20</span>);</span><br><span class="line">ctx.stroke();</span><br></pre></td></tr></table></figure>
@@ -7,16 +494,139 @@
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ctx.moveTo(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">ctx.lineTo(<span class="number">200</span>, <span class="number">200</span>);</span><br><span class="line">ctx.stroke();</span><br></pre></td></tr></table></figure>
 <p><img src="https://user-gold-cdn.xitu.io/2018/12/8/1678caf2cc0e2b59?w=708&amp;h=300&amp;f=png&amp;s=18448" alt=""></p>
 <h2 id="圆角矩形"><a href="#圆角矩形" class="headerlink" title="圆角矩形"></a>圆角矩形</h2><p>要实现圆角矩形，先来了解一下画圆的api。</p>
-<h3 id="arc-x-y-r-sAngle-eAngle-counterclockwise"><a href="#arc-x-y-r-sAngle-eAngle-counterclockwise" class="headerlink" title="arc(x, y, r, sAngle, eAngle, counterclockwise)"></a>arc(x, y, r, sAngle, eAngle, counterclockwise)</h3><table><br><thead><br>    <th>参数</th><br>    <th>描述</th><br></thead><br><tbody><br><tr><br>    <td>x</td><br>    <td>圆的中心的 x 坐标。 </td><br></tr><br><tr><br>    <td>y</td><br>    <td>圆的中心的 y 坐标。 </td><br></tr><br><tr><br>    <td>x</td><br>    <td>圆的半径。 </td><br></tr><br><tr><br>    <td>sAngle</td><br>    <td>起始角，以弧度计。（弧的圆形的三点钟位置是 0 度）。</td><br></tr><br><tr><br>    <td>eAngle</td><br>    <td>结束角，以弧度计。  </td><br></tr><br><tr><br>    <td>counterclockwise</td><br>    <td>可选。规定应该逆时针还是顺时针绘图，默认值false。false = 顺时针，true = 逆时针。  </td><br></tr><br></tbody><br></table>
-
+<h3 id="arc-x-y-r-sAngle-eAngle-counterclockwise"><a href="#arc-x-y-r-sAngle-eAngle-counterclockwise" class="headerlink" title="arc(x, y, r, sAngle, eAngle, counterclockwise)"></a>arc(x, y, r, sAngle, eAngle, counterclockwise)</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>x</td>
+<td>圆的中心的 x 坐标。</td>
+</tr>
+<tr>
+<td>y</td>
+<td>圆的中心的 y 坐标。</td>
+</tr>
+<tr>
+<td>r</td>
+<td>圆的半径。</td>
+</tr>
+<tr>
+<td>sAngle</td>
+<td>起始角，以弧度计。（弧的圆形的三点钟位置是 0 度）。</td>
+</tr>
+<tr>
+<td>eAngle</td>
+<td>结束角，以弧度计。</td>
+</tr>
+<tr>
+<td>counterclockwise</td>
+<td>可选。规定应该逆时针还是顺时针绘图，默认值false。false = 顺时针，true = 逆时针。</td>
+</tr>
+</tbody>
+</table>
 <p><img src="https://user-gold-cdn.xitu.io/2018/12/8/1678cb6968997a6b?w=204&amp;h=210&amp;f=gif&amp;s=1857" alt=""><br>画圆<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">canvas</span> <span class="attr">id</span>=<span class="string">"canvas11"</span> <span class="attr">width</span>=<span class="string">&#123;100&#125;</span> <span class="attr">height</span>=<span class="string">&#123;100&#125;</span>&gt;</span><span class="tag">&lt;/<span class="name">canvas</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctx.arc(<span class="number">50</span>, <span class="number">50</span>, <span class="number">20</span>, <span class="number">0</span>, <span class="number">2</span> * <span class="built_in">Math</span>.PI);</span><br></pre></td></tr></table></figure>
 <p><img src="https://user-gold-cdn.xitu.io/2018/12/8/1678cbf146fbd0b1?w=260&amp;h=296&amp;f=png&amp;s=10713" alt=""><br>圆弧<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">canvas</span> <span class="attr">id</span>=<span class="string">"canvas10"</span> <span class="attr">width</span>=<span class="string">&#123;100&#125;</span> <span class="attr">height</span>=<span class="string">&#123;100&#125;</span>&gt;</span><span class="tag">&lt;/<span class="name">canvas</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ctx.arc(<span class="number">20</span>, <span class="number">20</span>, <span class="number">20</span>, <span class="built_in">Math</span>.PI, <span class="number">1.5</span> * <span class="built_in">Math</span>.PI);    <span class="comment">// 左上角</span></span><br><span class="line">ctx.arc(<span class="number">80</span>, <span class="number">20</span>, <span class="number">20</span>, <span class="number">1.5</span> * <span class="built_in">Math</span>.PI, <span class="number">2</span> * <span class="built_in">Math</span>.PI);    <span class="comment">// 右上角</span></span><br><span class="line">ctx.arc(<span class="number">20</span>, <span class="number">80</span>, <span class="number">20</span>, <span class="number">0.5</span> * <span class="built_in">Math</span>.PI, <span class="built_in">Math</span>.PI);    <span class="comment">// 左下角</span></span><br><span class="line">ctx.arc(<span class="number">80</span>, <span class="number">80</span>, <span class="number">20</span>, <span class="number">0</span>, <span class="number">0.5</span> * <span class="built_in">Math</span>.PI);    <span class="comment">// 右下角</span></span><br></pre></td></tr></table></figure>
 <p><img src="https://user-gold-cdn.xitu.io/2018/12/8/1678cc1408f926ca?w=262&amp;h=292&amp;f=png&amp;s=12469" alt=""><br>有了这四段圆弧，再利用<code>closePath</code>方法会连接路径的特点，即可画出圆角矩形了。来封装一个画圆角矩形的函数：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> drawRoundedRect = <span class="function">(<span class="params">ctx, x, y, width, height, radius, type</span>) =&gt;</span> &#123;</span><br><span class="line">  ctx.moveTo(x, y + radius);</span><br><span class="line">  ctx.beginPath();</span><br><span class="line">  ctx.arc(x + radius, y + radius, radius, <span class="built_in">Math</span>.PI, <span class="number">1.5</span> * <span class="built_in">Math</span>.PI);</span><br><span class="line">  ctx.arc(x + width - radius, y + radius, radius, <span class="number">1.5</span> * <span class="built_in">Math</span>.PI, <span class="number">2</span> * <span class="built_in">Math</span>.PI);</span><br><span class="line">  ctx.arc(x + width - radius, y + height - radius, radius, <span class="number">0</span>, <span class="number">0.5</span> * <span class="built_in">Math</span>.PI);</span><br><span class="line">  ctx.arc(x + radius, y + height - radius, radius, <span class="number">0.5</span> * <span class="built_in">Math</span>.PI, <span class="built_in">Math</span>.PI);</span><br><span class="line">  ctx.closePath();</span><br><span class="line">  <span class="keyword">const</span> method = type || <span class="string">'stroke'</span>;  <span class="comment">// 默认描边，传入fill即可填充矩形</span></span><br><span class="line">  ctx[method]();</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">drawRoundedRect(ctx, <span class="number">20</span>, <span class="number">20</span>, <span class="number">50</span>, <span class="number">50</span>, <span class="number">10</span>);</span><br></pre></td></tr></table></figure></p>
 <p><img src="https://user-gold-cdn.xitu.io/2018/12/8/1678cc41443a6e23?w=226&amp;h=284&amp;f=png&amp;s=14065" alt=""></p>
-<h3 id="纹理"><a href="#纹理" class="headerlink" title="纹理"></a>纹理</h3><h4 id="createPattern-img-“repeat-repeat-x-repeat-y-no-repeat”"><a href="#createPattern-img-“repeat-repeat-x-repeat-y-no-repeat”" class="headerlink" title="createPattern(img, “repeat|repeat-x|repeat-y|no-repeat”)"></a>createPattern(img, “repeat|repeat-x|repeat-y|no-repeat”)</h4><table><br><thead><br><th>参数</th><br><th>描述</th><br></thead><br><tbody><br><tr><br>    <td>img</td><br>    <td>规定要使用的图片、画布或视频元素。</td><br></tr><br><tr><br>    <td>repeat</td><br>    <td>默认。该模式在水平和垂直方向重复。</td><br></tr><br><tr><br>    <td>repeat-x</td><br>    <td>该模式只在水平方向重复。</td><br></tr><br><tr><br>    <td>repeat-y</td><br>    <td>该模式只在垂直方向重复。 </td><br></tr><br><tr><br>    <td>no-repeat</td><br>    <td>该模式只显示一次（不重复）。</td><br></tr><br></tbody><br></table><br>原图<br><br><img src="https://user-gold-cdn.xitu.io/2018/12/8/1678ccced19b54fd?w=320&amp;h=240&amp;f=jpeg&amp;s=15095" alt=""><br>尝试如下代码：<br><br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">canvas</span> <span class="attr">id</span>=<span class="string">"canvas13"</span> <span class="attr">width</span>=<span class="string">&#123;400&#125;</span> <span class="attr">height</span>=<span class="string">&#123;300&#125;</span>&gt;</span><span class="tag">&lt;/<span class="name">canvas</span>&gt;</span></span><br></pre></td></tr></table></figure><br><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> img = <span class="keyword">new</span> Image();</span><br><span class="line">img.onload = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'catImg'</span>, img.width, img.height);</span><br><span class="line"><span class="keyword">const</span> pat = ctx.createPattern(img, <span class="string">'no-repeat'</span>);</span><br><span class="line">ctx.fillStyle = pat;</span><br><span class="line">drawRoundedRect(ctx, <span class="number">130</span>, <span class="number">30</span>, <span class="number">250</span>, <span class="number">260</span>, <span class="number">10</span>, <span class="string">'fill'</span>);</span><br><span class="line">&#125;;</span><br><span class="line">img.src = catImgSrc;</span><br></pre></td></tr></table></figure><br><br><img src="https://user-gold-cdn.xitu.io/2018/12/8/1678ccd8cf380bac?w=822&amp;h=670&amp;f=png&amp;s=296556" alt=""><br>从结果里发现两个问题：<br>1. 图片的左上角和矩形的左上角不在同一点上；<br>2. 矩形貌似少了右边和下边的部分。<br><br>接下来尝试修改代码里的 <code>no-repeat</code> 为 <code>repeat</code>:<br><br><img src="https://user-gold-cdn.xitu.io/2018/12/8/1678cd02ff14ca2a?w=842&amp;h=692&amp;f=png&amp;s=446408" alt=""><br>结合这两个结果和上面的问题，总结出纹理的如下特点：<br>1. 纹理是从画布的（0，0）点开始无缩放渲染的；<br>2. 设置<code>no-repeat</code>会导致那些没有纹理覆盖的区域是空白。<br><br>这意味着我们不能自由的使用纹理来实现圆角图片的效果。<br>接下来了解一下canvas提供的专门用于图片剪裁的api。<br><br>## 剪裁<br>剪裁分为画布的剪裁<code>clip</code>和图片的剪裁<code>drawImage</code>，先来介绍一下图片的剪裁。<br>### drawImage(img, sx, sy, swidth, sheight, x, y, width, height)<br><table><br><thead><br><th>参数</th><br><th>描述</th><br></thead><br><tbody><br><tr><br>    <td>img</td><br>    <td>规定要使用的图像、画布或视频。</td><br></tr><br><tr><br>    <td>sx</td><br>    <td>可选。开始剪切的 x 坐标位置。</td><br></tr><br><tr><br>    <td>sy</td><br>    <td>可选。开始剪切的 y 坐标位置。</td><br></tr><br><tr><br>    <td>swidth</td><br>    <td>可选。被剪切图像的宽度。</td><br></tr><br><tr><br>    <td>sheight</td><br>    <td>可选。被剪切图像的高度。</td><br></tr><br><tr><br>    <td>x</td><br>    <td>在画布上放置图像的 x 坐标位置。</td><br></tr><br><tr><br>    <td>y</td><br>    <td>在画布上放置图像的 y 坐标位置。</td><br></tr><br><tr><br>    <td>width</td><br>    <td>可选。要使用的图像的宽度。（伸展或缩小图像）</td><br></tr><br><tr><br>    <td>height</td><br>    <td>可选。要使用的图像的高度。（伸展或缩小图像）</td><br></tr><br></tbody><br></table>
-
+<h3 id="纹理"><a href="#纹理" class="headerlink" title="纹理"></a>纹理</h3><h4 id="createPattern-img-“repeat-repeat-x-repeat-y-no-repeat”"><a href="#createPattern-img-“repeat-repeat-x-repeat-y-no-repeat”" class="headerlink" title="createPattern(img, “repeat|repeat-x|repeat-y|no-repeat”)"></a>createPattern(img, “repeat|repeat-x|repeat-y|no-repeat”)</h4><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>img</td>
+<td>规定要使用的图片、画布或视频元素。</td>
+</tr>
+<tr>
+<td>repeat</td>
+<td>默认。该模式在水平和垂直方向重复。</td>
+</tr>
+<tr>
+<td>repeat-x</td>
+<td>该模式只在水平方向重复。</td>
+</tr>
+<tr>
+<td>repeat-y</td>
+<td>该模式只在垂直方向重复。</td>
+</tr>
+<tr>
+<td>no-repeat</td>
+<td>该模式只显示一次（不重复）。</td>
+</tr>
+</tbody>
+</table>
+<p>原图</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/12/8/1678ccced19b54fd?w=320&amp;h=240&amp;f=jpeg&amp;s=15095" alt=""><br>尝试如下代码： </p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">canvas</span> <span class="attr">id</span>=<span class="string">"canvas13"</span> <span class="attr">width</span>=<span class="string">&#123;400&#125;</span> <span class="attr">height</span>=<span class="string">&#123;300&#125;</span>&gt;</span><span class="tag">&lt;/<span class="name">canvas</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> img = <span class="keyword">new</span> Image();</span><br><span class="line">img.onload = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'catImg'</span>, img.width, img.height);</span><br><span class="line"><span class="keyword">const</span> pat = ctx.createPattern(img, <span class="string">'no-repeat'</span>);</span><br><span class="line">ctx.fillStyle = pat;</span><br><span class="line">drawRoundedRect(ctx, <span class="number">130</span>, <span class="number">30</span>, <span class="number">250</span>, <span class="number">260</span>, <span class="number">10</span>, <span class="string">'fill'</span>);</span><br><span class="line">&#125;;</span><br><span class="line">img.src = catImgSrc;</span><br></pre></td></tr></table></figure>
+<p><img src="https://user-gold-cdn.xitu.io/2018/12/8/1678ccd8cf380bac?w=822&amp;h=670&amp;f=png&amp;s=296556" alt=""><br>从结果里发现两个问题：  </p>
+<ol>
+<li>图片的左上角和矩形的左上角不在同一点上；</li>
+<li>矩形貌似少了右边和下边的部分。    </li>
+</ol>
+<p>接下来尝试修改代码里的 <code>no-repeat</code> 为 <code>repeat</code>:</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/12/8/1678cd02ff14ca2a?w=842&amp;h=692&amp;f=png&amp;s=446408" alt=""><br>结合这两个结果和上面的问题，总结出纹理的如下特点：</p>
+<ol>
+<li>纹理是从画布的（0，0）点开始无缩放渲染的；</li>
+<li>设置<code>no-repeat</code>会导致那些没有纹理覆盖的区域是空白。</li>
+</ol>
+<p>这意味着我们不能自由的使用纹理来实现圆角图片的效果。<br>接下来了解一下canvas提供的专门用于图片剪裁的api。</p>
+<h2 id="剪裁"><a href="#剪裁" class="headerlink" title="剪裁"></a>剪裁</h2><p>剪裁分为画布的剪裁<code>clip</code>和图片的剪裁<code>drawImage</code>，先来介绍一下图片的剪裁。</p>
+<h3 id="drawImage-img-sx-sy-swidth-sheight-x-y-width-height"><a href="#drawImage-img-sx-sy-swidth-sheight-x-y-width-height" class="headerlink" title="drawImage(img, sx, sy, swidth, sheight, x, y, width, height)"></a>drawImage(img, sx, sy, swidth, sheight, x, y, width, height)</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>img</td>
+<td>规定要使用的图像、画布或视频。</td>
+</tr>
+<tr>
+<td>sx</td>
+<td>可选。开始剪切的 x 坐标位置。</td>
+</tr>
+<tr>
+<td>sy</td>
+<td>可选。开始剪切的 y 坐标位置。</td>
+</tr>
+<tr>
+<td>swidth</td>
+<td>可选。被剪切图像的宽度。</td>
+</tr>
+<tr>
+<td>sheight</td>
+<td>可选。被剪切图像的高度。</td>
+</tr>
+<tr>
+<td>x</td>
+<td>在画布上放置图像的 x 坐标位置。</td>
+</tr>
+<tr>
+<td>y</td>
+<td>在画布上放置图像的 y 坐标位置。</td>
+</tr>
+<tr>
+<td>width</td>
+<td>可选。要使用的图像的宽度。（伸展或缩小图像）</td>
+</tr>
+<tr>
+<td>height</td>
+<td>可选。要使用的图像的高度。（伸展或缩小图像）</td>
+</tr>
+</tbody>
+</table>
 <p>drawImage可接受3、5、9个参数。<br>接下来介绍一下分别传这几个参数的表现，先看原图：<br>大小：1080 * 720<br><img src="https://user-gold-cdn.xitu.io/2018/12/8/1678cee75cc7c6e9?w=414&amp;h=276&amp;f=png&amp;s=180090" alt=""></p>
 <h4 id="三个参数"><a href="#三个参数" class="headerlink" title="三个参数"></a>三个参数</h4><p>会被当做：img、x、y。图片不会缩放和剪裁，直接渲染到画布上，超过画布的区域被隐藏，也可理解成超过画布的区域被剪掉了。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> img = <span class="keyword">new</span> Image();</span><br><span class="line">img.onload = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'img:'</span>, img.width, img.height);</span><br><span class="line">  ctx.drawImage(img, <span class="number">10</span>, <span class="number">20</span>);</span><br><span class="line">&#125;;</span><br><span class="line">img.src = imgSrc;</span><br></pre></td></tr></table></figure></p>
 <p><img src="https://user-gold-cdn.xitu.io/2018/12/8/1678cf55c7a10005?w=426&amp;h=492&amp;f=png&amp;s=85899" alt=""></p>
@@ -33,16 +643,439 @@
 <p><img src="https://user-gold-cdn.xitu.io/2018/12/8/1678d2758f73be4b?w=648&amp;h=292&amp;f=png&amp;s=77523" alt=""><br>接下来封装一个能实现圆角功能的<code>drawImage</code>:<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> drawRoundedImage = <span class="function">(<span class="params">ctx, radius, img, sx, sy, swidth, sheight, x, y, width, height</span>) =&gt;</span> &#123;</span><br><span class="line">  ctx.save();</span><br><span class="line">  ctx.moveTo(x, y + radius);</span><br><span class="line">  ctx.beginPath();</span><br><span class="line">  <span class="keyword">if</span> (width === height &amp;&amp; radius &gt;= width / <span class="number">2</span>) &#123;</span><br><span class="line">    ctx.arc(x + radius, y + radius, radius, <span class="number">0</span>, <span class="number">2</span> * <span class="built_in">Math</span>.PI);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    ctx.arc(x + radius, y + radius, radius, <span class="built_in">Math</span>.PI, <span class="number">1.5</span> * <span class="built_in">Math</span>.PI);</span><br><span class="line">    ctx.arc(x + width - radius, y + radius, radius, <span class="number">1.5</span> * <span class="built_in">Math</span>.PI, <span class="number">2</span> * <span class="built_in">Math</span>.PI);</span><br><span class="line">    ctx.arc(x + width - radius, y + height - radius, radius, <span class="number">0</span>, <span class="number">0.5</span> * <span class="built_in">Math</span>.PI);</span><br><span class="line">    ctx.arc(x + radius, y + height - radius, radius, <span class="number">0.5</span> * <span class="built_in">Math</span>.PI, <span class="built_in">Math</span>.PI);</span><br><span class="line">  &#125;</span><br><span class="line">  ctx.closePath();</span><br><span class="line">  ctx.clip();</span><br><span class="line">  ctx.drawImage(img, sx, sy, swidth, sheight, x, y, width, height);</span><br><span class="line">  ctx.restore();</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> img = <span class="keyword">new</span> Image();</span><br><span class="line">img.onload = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  drawRoundedImage(ctx, <span class="number">10</span>, img, (<span class="number">1080</span> - <span class="number">720</span>) / <span class="number">2</span>, <span class="number">0</span>, <span class="number">720</span>, <span class="number">720</span>, <span class="number">10</span>, <span class="number">10</span>, <span class="number">180</span>, <span class="number">180</span>);</span><br><span class="line">&#125;;</span><br><span class="line">img.src = imgSrc;</span><br></pre></td></tr></table></figure></p>
 <p>效果：</p>
 <p><img src="https://user-gold-cdn.xitu.io/2018/12/8/1678d305d5c40fc0?w=444&amp;h=430&amp;f=png&amp;s=180493" alt=""><br>如果把上面的绘制路径部分提出来当成参数传入，则可实现用户自定义图形然后将图片剪裁成该形状的功能：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> drawImageToWhatYouWant = <span class="function">(<span class="params">ctx, getPath, img, sx, sy, swidth, sheight, x, y, width, height</span>) =&gt;</span> &#123;</span><br><span class="line">  ctx.save();</span><br><span class="line">  getPath(ctx);  <span class="comment">// 自定义图形的路径</span></span><br><span class="line">  ctx.clip();</span><br><span class="line">  ctx.drawImage(img, sx, sy, swidth, sheight, x, y, width, height);</span><br><span class="line">  ctx.restore();</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<h2 id="保存图片"><a href="#保存图片" class="headerlink" title="保存图片"></a>保存图片</h2><h3 id="toDataURL-type-encoderOptions"><a href="#toDataURL-type-encoderOptions" class="headerlink" title="toDataURL([type, encoderOptions])"></a>toDataURL([type, encoderOptions])</h3><table><br><thead><br><th>参数</th><br><th>描述</th><br></thead><br><tbody><br><tr><br>    <td>type</td><br>    <td>图片格式，默认为image/png</td><br></tr><br><tr><br>    <td>encoderOptions</td><br>    <td>在指定图片格式为 image/jpeg 或 image/webp的情况下，可以从 0 到 1 的区间内选择图片的质量。如果超出取值范围，将会使用默认值 0.92。其他参数会被忽略。</td><br></tr><br></tbody><br></table>
-
+<h2 id="保存图片"><a href="#保存图片" class="headerlink" title="保存图片"></a>保存图片</h2><h3 id="toDataURL-type-encoderOptions"><a href="#toDataURL-type-encoderOptions" class="headerlink" title="toDataURL([type, encoderOptions])"></a>toDataURL([type, encoderOptions])</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>type</td>
+<td>图片格式，默认为image/png</td>
+</tr>
+<tr>
+<td>encoderOptions</td>
+<td>在指定图片格式为 image/jpeg 或 image/webp的情况下，可以从 0 到 1 的区间内选择图片的质量。如果超出取值范围，将会使用默认值 0.92。其他参数会被忽略。</td>
+</tr>
+</tbody>
+</table>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">调用：</span><br><span class="line"><span class="keyword">const</span> imgStr = canvas.toDataURL(<span class="string">"image/jpeg"</span>, <span class="number">1.0</span>);</span><br></pre></td></tr></table></figure>
 <p><strong>注意：当画布中包含图片时，此图片必须是允许跨域的，否则调用toDataURL 会报错！</strong></p>
-<h5 id="查看完整代码示例：https-github-com-vivimee-learn-canvas"><a href="#查看完整代码示例：https-github-com-vivimee-learn-canvas" class="headerlink" title="查看完整代码示例：https://github.com/vivimee/learn-canvas"></a>查看完整代码示例：<a href="https://github.com/vivimee/learn-canvas" target="_blank" rel="noopener">https://github.com/vivimee/learn-canvas</a></h5></div></article></div><div id="disqus_thread"></div></div><script>var disqus_shortname = 'angrypowman';
-var disqus_identifier = '2018/12/08/canvas-1/';
-var disqus_title = 'canvas-坐标系、圆角矩形、纹理、剪裁图片';
-var disqus_url = 'https://vivimee.github.io/2018/12/08/canvas-1/';
-(function() {
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-})();</script><script id="dsq-count-scr" src="//angrypowman.disqus.com/count.js" async></script></main><footer class="footer-container"><div class="paginator"><a href="/2018/12/02/html5-history/" class="next">下一篇</a></div><div class="copyright"><p>© 2018 <a href="https://vivimee.github.io">vivimee</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/AngryPowman/hexo-theme-prontera" target="_blank">hexo-theme-prontera</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"angrypowman",'auto');ga('send','pageview');</script></body></html>
+<h5 id="查看完整代码示例：https-github-com-vivimee-learn-canvas"><a href="#查看完整代码示例：https-github-com-vivimee-learn-canvas" class="headerlink" title="查看完整代码示例：https://github.com/vivimee/learn-canvas"></a>查看完整代码示例：<a href="https://github.com/vivimee/learn-canvas" target="_blank" rel="noopener">https://github.com/vivimee/learn-canvas</a></h5>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/HTML5/" rel="tag"># HTML5</a>
+          
+            <a href="/tags/canvas/" rel="tag"># canvas</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/02/html5-history/" rel="next" title="html5-history">
+                <i class="fa fa-chevron-left"></i> html5-history
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Vivimee</p>
+              <p class="site-description motion-element" itemprop="description">自律给我自由！</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                    <span class="site-state-item-count">1</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/vivimee" title="GitHub &rarr; https://github.com/vivimee" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:vivimee@163.com" title="E-Mail &rarr; mailto:vivimee@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#坐标系"><span class="nav-number">1.</span> <span class="nav-text">坐标系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#圆角矩形"><span class="nav-number">2.</span> <span class="nav-text">圆角矩形</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#arc-x-y-r-sAngle-eAngle-counterclockwise"><span class="nav-number">2.1.</span> <span class="nav-text">arc(x, y, r, sAngle, eAngle, counterclockwise)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#纹理"><span class="nav-number">2.2.</span> <span class="nav-text">纹理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#createPattern-img-“repeat-repeat-x-repeat-y-no-repeat”"><span class="nav-number">2.2.1.</span> <span class="nav-text">createPattern(img, “repeat|repeat-x|repeat-y|no-repeat”)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#剪裁"><span class="nav-number">3.</span> <span class="nav-text">剪裁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#drawImage-img-sx-sy-swidth-sheight-x-y-width-height"><span class="nav-number">3.1.</span> <span class="nav-text">drawImage(img, sx, sy, swidth, sheight, x, y, width, height)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#三个参数"><span class="nav-number">3.1.1.</span> <span class="nav-text">三个参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#九个参数"><span class="nav-number">3.1.2.</span> <span class="nav-text">九个参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#五个参数"><span class="nav-number">3.1.3.</span> <span class="nav-text">五个参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#clip"><span class="nav-number">3.2.</span> <span class="nav-text">clip()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#保存图片"><span class="nav-number">4.</span> <span class="nav-text">保存图片</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#toDataURL-type-encoderOptions"><span class="nav-number">4.1.</span> <span class="nav-text">toDataURL([type, encoderOptions])</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#查看完整代码示例：https-github-com-vivimee-learn-canvas"><span class="nav-number">4.1.0.1.</span> <span class="nav-text">查看完整代码示例：https://github.com/vivimee/learn-canvas</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Vivimee</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v6.6.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.6.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.6.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.6.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.6.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.6.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.6.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.6.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
